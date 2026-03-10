@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Al-Quran Online | Lecture du Coran Premium</title>
+    <meta name="description" content="Lisez le Saint Coran en ligne avec traductions et audio dans une interface moderne et élégante.">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav class="glass-nav">
+        <div class="container header">
+            <a href="#" class="logo" id="home-btn">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 3L4 9v12h16V9l-8-6zm0 2.5l6 4.5V19h-4v-6H10v6H6V10l6-4.5z"/>
+                </svg>
+                Al-Quran
+            </a>
+            <div id="nav-actions">
+                <!-- Translation toggle could go here -->
+            </div>
+        </div>
+    </nav>
+
+    <main class="container">
+        <div id="app-view">
+            <!-- Dynamic content will be injected here -->
+            <div class="loading">
+                <div class="spinner"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="api.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
