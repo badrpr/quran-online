@@ -404,21 +404,7 @@ main {
     to { transform: rotate(360deg); }
 }
 
-/* Tajweed Rules */
-.tajweed-text .ham_wasl, .tajweed-text .slnt { color: #AAAAAA; }
-.tajweed-text .madda_normal { color: #537FFF; }
-.tajweed-text .madda_permissible { color: #4050FF; }
-.tajweed-text .madda_necessary { color: #000EBC; }
-.tajweed-text .qlq { color: #DD0008; }
-.tajweed-text .madda_obligatory { color: #2144C1; }
-.tajweed-text .ikhf_shfw { color: #D500B7; }
-.tajweed-text .ikhf { color: #9400A8; }
-.tajweed-text .idghm_shfw { color: #58B800; }
-.tajweed-text .iqlb { color: #26BFFD; }
-.tajweed-text .idgh_ghn { color: #169777; }
-.tajweed-text .idgh_w_ghn { color: #169200; }
-.tajweed-text .idgh_mus { color: #A1A1A1; }
-.tajweed-text .ghn { color: #FF7E1E; }
+
 
 @media (max-width: 768px) {
     .container { padding: 0 1rem; }

@@ -229,6 +229,22 @@ function parseTajweed(text) {
     });
 }
 
+function parseTajweed(text) {
+    const rules = {
+        'h': 'ham_wasl', 's': 'slnt', 'l': 'slnt', 'n': 'madda_normal',
+        'p': 'madda_permissible', 'm': 'madda_necessary', 'q': 'qlq',
+        'o': 'madda_obligatory', 'c': 'ikhf_shfw', 'f': 'ikhf', 'w': 'idghm_shfw',
+        'i': 'iqlb', 'a': 'idgh_ghn', 'u': 'idgh_w_ghn', 'd': 'idgh_mus',
+        'b': 'idgh_mus', 'g': 'ghn'
+    };
+
+    // Correct regex handling both [letter:id[text]] and [letter[text]] forms
+    return text.replace(/\[([a-z])[^\[]*\[([^\]]+)\]/g, (match, identifier, content) => {
+        const className = rules[identifier] || '';
+        return `<span class="${className}">${content}</span>`;
+    });
+}
+
 async function renderSurahReader(id) {
     const t = i18n[currentLang];
     currentView = 'reader';
