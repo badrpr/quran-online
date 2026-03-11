@@ -4,12 +4,133 @@ const app = document.getElementById('app-view');
 const homeBtn = document.getElementById('home-btn');
 
 let surahs = [];
+let reciters = [];
+let translations = [];
+let currentLang = 'fr'; // 'fr' or 'en'
+let selectedTranslationId = 'fr.hamidullah';
+let currentView = 'list'; // 'list' or 'reader'
+let currentSurahId = null;
+
+const i18n = {
+    fr: {
+        logoName: 'Al-Quran',
+        heroTitle: 'Le Saint Coran',
+        heroDesc: 'Explorez les 114 sourates avec une interface moderne et élégante.',
+        searchPlaceholder: 'Rechercher une sourate (nom ou numéro)...',
+        versets: 'Versets',
+        back: '← Retour',
+        listen: 'Écouter la Sourate',
+        pause: 'Pause',
+        resume: 'Reprendre',
+        ready: 'Prêt à écouter',
+        loading: 'Chargement de l\'audio...',
+        notAvailable: 'Audio non disponible pour ce récitant',
+        error: 'Erreur lors du chargement de la sourate.',
+        reciterLabel: 'Choisir un Récitant',
+        ayah: 'Verset',
+        fin: 'Fin de la sourate',
+        reListen: 'Écouter à nouveau',
+        meccan: 'Mecquoise',
+        medinan: 'Médinoise'
+    },
+    en: {
+        logoName: 'Al-Quran',
+        heroTitle: 'The Holy Quran',
+        heroDesc: 'Explore the 114 Surahs with a modern and elegant interface.',
+        searchPlaceholder: 'Search for a surah (name or number)...',
+        versets: 'Ayahs',
+        back: '← Back',
+        listen: 'Listen to Surah',
+        pause: 'Pause',
+        resume: 'Resume',
+        ready: 'Ready to listen',
+        loading: 'Loading audio...',
+        notAvailable: 'Audio not available for this reciter',
+        error: 'Error loading the surah.',
+        reciterLabel: 'Choose a Reciter',
+        ayah: 'Ayah',
+        fin: 'End of Surah',
+        reListen: 'Listen again',
+        meccan: 'Meccan',
+        medinan: 'Medinan'
+    }
+};
+
+const langConfig = {
+    fr: { id: 'fr.hamidullah', name: 'Français' },
+    en: { id: 'en.sahih', name: 'English' }
+};
 
 // Router / State Management
 async function init() {
+    setupScrollHandler();
     showLoading();
-    surahs = await fetchSurahList();
+    [surahs, reciters] = await Promise.all([
+        fetchSurahList(),
+        fetchReciters()
+    ]);
+    renderLangSelector();
     renderSurahList();
+}
+
+function setupScrollHandler() {
+    const nav = document.getElementById('main-nav');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 20) {
+            nav.classList.add('scrolled');
+        } else {
+            nav.classList.remove('scrolled');
+        }
+    });
+}
+
+function renderLangSelector() {
+    const container = document.getElementById('lang-selector-container');
+    const availableLangs = [
+        { code: 'fr', name: 'Français' },
+        { code: 'en', name: 'English' }
+    ];
+
+    container.innerHTML = `
+        <div id="lang-custom-select" class="custom-select glass header-select">
+            <div class="custom-select-trigger">
+                <span id="selected-lang-name">${currentLang === 'fr' ? 'Français' : 'English'}</span>
+                <div class="arrow"></div>
+            </div>
+            <div class="custom-options glass">
+                ${availableLangs.map(l => `
+                    <div class="custom-option" data-value="${l.code}" ${l.code === currentLang ? 'data-selected="true"' : ''}>
+                        <span class="option-name">${l.name}</span>
+                    </div>
+                `).join('')}
+            </div>
+        </div>
+    `;
+
+    const select = container.querySelector('#lang-custom-select');
+    select.querySelector('.custom-select-trigger').addEventListener('click', (e) => {
+        e.stopPropagation();
+        select.classList.toggle('open');
+    });
+
+    container.querySelectorAll('.custom-option').forEach(option => {
+        option.addEventListener('click', () => {
+            const newLang = option.getAttribute('data-value');
+            if (newLang !== currentLang) {
+                currentLang = newLang;
+                selectedTranslationId = langConfig[currentLang].id;
+                
+                // Update header logo text if needed (keeping it "Al-Quran" for now)
+                
+                renderLangSelector();
+                if (currentView === 'reader' && currentSurahId) {
+                    renderSurahReader(currentSurahId);
+                } else {
+                    renderSurahList();
+                }
+            }
+        });
+    });
 }
 
 function showLoading() {
@@ -17,13 +138,16 @@ function showLoading() {
 }
 
 function renderSurahList(filteredSurahs = surahs) {
+    const t = i18n[currentLang];
+    currentView = 'list';
+    currentSurahId = null;
     const html = `
         <div class="hero">
-            <h1>Le Saint Coran</h1>
-            <p>Explorez les 114 sourates avec une interface moderne et élégante.</p>
+            <h1>${t.heroTitle}</h1>
+            <p>${t.heroDesc}</p>
         </div>
         <div class="search-container">
-            <input type="text" id="search-input" class="search-bar" placeholder="Rechercher une sourate (nom ou numéro)...">
+            <input type="text" id="search-input" class="search-bar" placeholder="${t.searchPlaceholder}">
         </div>
         <div class="surah-grid">
             ${filteredSurahs.map(surah => `
@@ -34,7 +158,7 @@ function renderSurahList(filteredSurahs = surahs) {
                     </div>
                     <div class="surah-info">
                         <h3>${surah.englishName}</h3>
-                        <span>${surah.englishNameTranslation} • ${surah.numberOfAyahs} Ayahs</span>
+                        <span>${surah.englishNameTranslation} • ${surah.numberOfAyahs} ${t.versets}</span>
                     </div>
                 </div>
             `).join('')}
@@ -106,34 +230,54 @@ function parseTajweed(text) {
 }
 
 async function renderSurahReader(id) {
+    const t = i18n[currentLang];
+    currentView = 'reader';
+    currentSurahId = id;
     showLoading();
     const [arabicData, translationData] = await Promise.all([
         fetchSurahDetail(id, 'quran-uthmani'),
-        fetchTranslation(id)
+        fetchTranslation(id, selectedTranslationId)
     ]);
 
     if (!arabicData || !translationData) {
-        app.innerHTML = '<div class="error">Erreur lors du chargement de la sourate.</div>';
+        app.innerHTML = `<div class="error">${t.error}</div>`;
         return;
     }
 
     const html = `
         <div class="reader-container">
-            <div class="hero glass" style="margin-bottom: 2rem; padding: 2rem;">
+            <div class="hero glass" style="margin-top: 2rem; margin-bottom: 2rem; padding: 2rem;">
                 <h2 class="surah-name-ar" style="font-size: 3rem;">${arabicData.name}</h2>
                 <h3 style="color: var(--accent);">${arabicData.englishName}</h3>
-                <p>${arabicData.englishNameTranslation} • ${arabicData.revelationType} • ${arabicData.numberOfAyahs} Versets</p>
+                <p>${arabicData.englishNameTranslation} • ${arabicData.revelationType === 'Meccan' ? t.meccan : t.medinan} • ${arabicData.numberOfAyahs} ${t.versets}</p>
                 
                 <div class="audio-controls" style="margin-top: 1.5rem; display: flex; flex-direction: column; align-items: center; gap: 1rem;">
+                    <div class="custom-select-wrapper" style="width: 100%; max-width: 400px;">
+                        <label style="font-size: 0.9rem; font-weight: 500; margin-bottom: 0.5rem; display: block; color: var(--text-muted);">${t.reciterLabel}</label>
+                        <div id="reciter-custom-select" class="custom-select glass">
+                            <div class="custom-select-trigger">
+                                <span id="selected-reciter-name">Mishary Rashid Alafasy</span>
+                                <div class="arrow"></div>
+                            </div>
+                            <div class="custom-options glass">
+                                ${reciters.map(r => `
+                                    <div class="custom-option" data-value="${r.identifier}" ${r.identifier === 'ar.alafasy' ? 'data-selected="true"' : ''}>
+                                        <span class="option-name">${r.name}</span>
+                                        <span class="option-sub">${r.englishName}</span>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
                     <audio id="surah-audio" controls style="width: 100%; max-width: 400px;"></audio>
                     <button id="play-surah-btn" class="glass" style="padding: 0.8rem 2rem; cursor: pointer; color: white; border-radius: 50px; background: var(--primary); display: flex; align-items: center; gap: 0.5rem; border: none; font-weight: 600;">
                         <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-                        Écouter la Sourate
+                        ${t.listen}
                     </button>
-                    <div id="audio-status" style="font-size: 0.9rem; color: var(--text-muted);">Prêt à écouter</div>
+                    <div id="audio-status" style="font-size: 0.9rem; color: var(--text-muted);">${t.ready}</div>
                 </div>
 
-                <button id="back-btn" class="glass" style="margin-top: 2rem; padding: 0.5rem 1rem; cursor: pointer; color: white; border-radius: 8px;">← Retour</button>
+                <button id="back-btn" class="glass" style="margin-top: 2rem; padding: 0.5rem 1rem; cursor: pointer; color: white; border-radius: 8px;">${t.back}</button>
             </div>
             <div class="ayah-list">
                 ${arabicData.ayahs.map((ayah, index) => `
@@ -155,28 +299,80 @@ async function renderSurahReader(id) {
     const audioPlayer = document.getElementById('surah-audio');
     const playBtn = document.getElementById('play-surah-btn');
     const status = document.getElementById('audio-status');
+    const customSelect = document.getElementById('reciter-custom-select');
+    const selectedText = document.getElementById('selected-reciter-name');
+    
+    let selectedReciterId = 'ar.alafasy';
+    let currentAudioData = null;
+    let currentAyahIndex = 0;
+
+    // Custom Select Interactivity
+    customSelect.querySelector('.custom-select-trigger').addEventListener('click', () => {
+        customSelect.classList.toggle('open');
+    });
+
+    document.querySelectorAll('.custom-option').forEach(option => {
+        option.addEventListener('click', () => {
+            const val = option.getAttribute('data-value');
+            const name = option.querySelector('.option-name').innerText;
+            
+            if (val !== selectedReciterId) {
+                selectedReciterId = val;
+                selectedText.innerText = name;
+                
+                // Update selected state in UI
+                document.querySelectorAll('.custom-option').forEach(opt => opt.removeAttribute('data-selected'));
+                option.setAttribute('data-selected', 'true');
+                
+                stopPlayback();
+            }
+            customSelect.classList.remove('open');
+        });
+    });
+
+    // Close select on outside click
+    window.addEventListener('click', (e) => {
+        if (!customSelect.contains(e.target)) {
+            customSelect.classList.remove('open');
+        }
+    });
+
+    const stopPlayback = () => {
+        const tr = i18n[currentLang];
+        audioPlayer.pause();
+        audioPlayer.src = '';
+        currentAudioData = null;
+        currentAyahIndex = 0;
+        playBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> ${tr.listen}`;
+        status.innerText = tr.ready;
+        document.querySelectorAll('.ayah-card').forEach(c => c.style.borderColor = 'var(--glass-border)');
+    };
 
     playBtn.addEventListener('click', async () => {
-        if (audioPlayer.src) {
+        const tr = i18n[currentLang];
+        if (audioPlayer.src && currentAudioData) {
             if (audioPlayer.paused) {
                 audioPlayer.play();
-                playBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Pause';
+                playBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> ${tr.pause}`;
             } else {
                 audioPlayer.pause();
-                playBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Reprendre';
+                playBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> ${tr.resume}`;
             }
             return;
         }
 
-        status.innerText = 'Chargement de l\'audio...';
+        status.innerText = tr.loading;
         playBtn.disabled = true;
         playBtn.style.opacity = '0.5';
 
-        const audioData = await fetchAudio(id);
-        if (audioData && audioData.ayahs && audioData.ayahs.length > 0) {
-            let currentAyahIndex = 0;
+        const selectedReciter = selectedReciterId;
+        currentAudioData = await fetchAudio(id, selectedReciter);
+        
+        if (currentAudioData && currentAudioData.ayahs && currentAudioData.ayahs.length > 0) {
+            currentAyahIndex = 0;
 
             const playAyah = (index) => {
+                const trInner = i18n[currentLang];
                 // Remove previous highlight
                 document.querySelectorAll('.ayah-card').forEach(c => c.style.borderColor = 'var(--glass-border)');
                 
@@ -188,28 +384,30 @@ async function renderSurahReader(id) {
                     ayahElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 }
 
-                audioPlayer.src = audioData.ayahs[index].audio;
+                audioPlayer.src = currentAudioData.ayahs[index].audio;
                 audioPlayer.play();
-                status.innerText = `Lecture du verset ${index + 1}/${audioData.ayahs.length}...`;
+                status.innerText = `${trInner.ayah} ${index + 1}/${currentAudioData.ayahs.length}...`;
             };
 
             playAyah(currentAyahIndex);
             playBtn.disabled = false;
             playBtn.style.opacity = '1';
-            playBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> Pause';
+            playBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg> ${tr.pause}`;
             
             audioPlayer.onended = () => {
+                const trEnd = i18n[currentLang];
                 currentAyahIndex++;
-                if (currentAyahIndex < audioData.ayahs.length) {
+                if (currentAyahIndex < currentAudioData.ayahs.length) {
                     playAyah(currentAyahIndex);
                 } else {
-                    status.innerText = 'Fin de la sourate';
-                    playBtn.innerHTML = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> Écouter à nouveau';
+                    status.innerText = trEnd.fin;
+                    playBtn.innerHTML = `<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg> ${trEnd.reListen}`;
                     document.querySelectorAll('.ayah-card').forEach(c => c.style.borderColor = 'var(--glass-border)');
+                    currentAudioData = null; // Allow re-fetching or re-starting
                 }
             };
         } else {
-            status.innerText = 'Audio non disponible';
+            status.innerText = tr.notAvailable;
             playBtn.disabled = false;
             playBtn.style.opacity = '1';
         }

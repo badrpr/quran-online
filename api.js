@@ -43,3 +43,25 @@ async function fetchAudio(id, edition = 'ar.alafasy') {
         return null;
     }
 }
+
+async function fetchReciters() {
+    try {
+        const response = await fetch(`${BASE_URL}/edition?format=audio&type=versebyverse`);
+        const data = await response.json();
+        return data.data;
+    } catch (error) {
+        console.error('Error fetching reciters:', error);
+        return [];
+    }
+}
+
+async function fetchTranslationsList() {
+    try {
+        const response = await fetch(`${BASE_URL}/edition?format=text&type=translation`);
+        const data = await response.json();
+        return data.data;
+    } catch (error) {
+        console.error('Error fetching translations list:', error);
+        return [];
+    }
+}

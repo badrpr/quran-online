@@ -8,16 +8,19 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="glass-nav">
-        <div class="container header">
+    <nav class="glass-nav" id="main-nav">
+        <div class="container" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
             <a href="#" class="logo" id="home-btn">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 3L4 9v12h16V9l-8-6zm0 2.5l6 4.5V19h-4v-6H10v6H6V10l6-4.5z"/>
-                </svg>
-                Al-Quran
+                <div class="logo-icon">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
+                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
+                    </svg>
+                </div>
+                <span class="logo-text">Al-Quran</span>
             </a>
-            <div id="nav-actions">
-                <!-- Translation toggle could go here -->
+            <div id="nav-actions" style="margin-left: auto; display: flex; align-items: center;">
+                <div id="lang-selector-container"></div>
             </div>
         </div>
     </nav>
