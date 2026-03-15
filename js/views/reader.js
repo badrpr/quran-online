@@ -57,16 +57,19 @@ export async function renderSurahReader(id) {
         const bookmarked  = isBookmarked(id, ayah.numberInSurah);
         const fillVal     = bookmarked ? 'currentColor' : 'none';
         const activeClass = bookmarked ? 'active' : '';
-        return `<div class="ayah-card glass" id="ayah-${index}" data-ayah-num="${ayah.numberInSurah}">
+        return `<div class="ayah-card glass" id="ayah-${index}" data-ayah-num="${ayah.numberInSurah}"
+                     role="article" aria-label="${t.ayah} ${ayah.numberInSurah}">
                     <div class="ayah-card-header">
-                        <div class="surah-number">${ayah.numberInSurah}</div>
-                        <button class="bookmark-btn ${activeClass}" data-ayah="${ayah.numberInSurah}" aria-label="Marquer comme favori">
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill="${fillVal}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <div class="surah-number" aria-hidden="true">${ayah.numberInSurah}</div>
+                        <button class="bookmark-btn ${activeClass}" data-ayah="${ayah.numberInSurah}"
+                                aria-label="${t.ayah} ${ayah.numberInSurah} — ${t.bookmarks}"
+                                aria-pressed="${bookmarked}">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="${fillVal}" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                             </svg>
                         </button>
                     </div>
-                    <div class="ayah-text">${parseTajweed(ayah.text)}</div>
+                    <div class="ayah-text" lang="ar">${parseTajweed(ayah.text)}</div>
                     <div class="ayah-translation">${translationData.ayahs[index].text}</div>
                 </div>`;
     }).join('');
@@ -95,11 +98,12 @@ export async function renderSurahReader(id) {
                             <div class="custom-options glass">${reciterOptions}</div>
                         </div>
                     </div>
-                    <audio id="surah-audio" style="display:none;"></audio>
+                    <audio id="surah-audio" style="display:none;" aria-hidden="true"></audio>
                     <button id="play-surah-btn" class="glass" style="padding:0.8rem 2rem;cursor:pointer;color:white;border-radius:50px;background:var(--primary);display:flex;align-items:center;gap:0.5rem;border:none;font-weight:600;">
                         ${ICON_PLAY} ${t.listen}
                     </button>
-                    <div id="audio-status" style="font-size:0.9rem;color:var(--text-muted);">${t.ready}</div>
+                    <div id="audio-status" style="font-size:0.9rem;color:var(--text-muted);"
+                         aria-live="polite" aria-atomic="true">${t.ready}</div>
                 </div>
 
                 <button id="back-btn" class="glass" style="margin-top:2rem;padding:0.5rem 1rem;cursor:pointer;color:white;border-radius:8px;">${t.back}</button>
@@ -132,6 +136,7 @@ export async function renderSurahReader(id) {
             const added   = toggleBookmark(id, ayahNum);
             btn.classList.toggle('active', added);
             btn.querySelector('svg').setAttribute('fill', added ? 'currentColor' : 'none');
+            btn.setAttribute('aria-pressed', String(added));
         });
     });
 
@@ -269,4 +274,22 @@ export async function renderSurahReader(id) {
         if (delta < 0 && numId < 114) navigate(`/surah/${numId + 1}`);
         if (delta > 0 && numId > 1)   navigate(`/surah/${numId - 1}`);
     }, { passive: true });
+
+    // ── Background prefetch of adjacent surahs ────────────────────────────────
+    const numId = parseInt(id, 10);
+    if ('requestIdleCallback' in window) {
+        requestIdleCallback(() => prefetchAdjacentSurahs(numId), { timeout: 3000 });
+    } else {
+        setTimeout(() => prefetchAdjacentSurahs(numId), 2000);
+    }
+}
+
+function prefetchAdjacentSurahs(numId) {
+    const ids = [];
+    if (numId > 1)   ids.push(numId - 1);
+    if (numId < 114) ids.push(numId + 1);
+    ids.forEach(adjId => {
+        fetch(`https://api.alquran.cloud/v1/surah/${adjId}/quran-uthmani`)
+            .catch(() => {});
+    });
 }

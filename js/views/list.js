@@ -6,10 +6,12 @@ import { app, render } from '../dom.js';
 
 function surahCardHTML(surah, t) {
     return `
-        <div class="surah-card glass" data-id="${surah.number}">
+        <div class="surah-card glass" data-id="${surah.number}"
+             role="listitem" tabindex="0"
+             aria-label="${surah.englishName} — ${t.surah} ${surah.number}">
             <div class="surah-header">
-                <div class="surah-number">${surah.number}</div>
-                <div class="surah-name-ar">${surah.name}</div>
+                <div class="surah-number" aria-hidden="true">${surah.number}</div>
+                <div class="surah-name-ar" lang="ar">${surah.name}</div>
             </div>
             <div class="surah-info">
                 <h3>${surah.englishName}</h3>
@@ -31,7 +33,9 @@ function filterSurahs(term) {
 
 function attachCardListeners() {
     document.querySelectorAll('.surah-card').forEach(card => {
-        card.addEventListener('click', () => navigate(`/surah/${card.getAttribute('data-id')}`));
+        const go = () => navigate(`/surah/${card.getAttribute('data-id')}`);
+        card.addEventListener('click', go);
+        card.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(); } });
     });
 }
 
@@ -59,12 +63,13 @@ export function renderSurahList() {
             <h1>${t.heroTitle}</h1>
             <p>${t.heroDesc}</p>
         </div>
-        <div class="search-container">
-            <input type="text" id="search-input" class="search-bar"
+        <div class="search-container" role="search">
+            <input type="search" id="search-input" class="search-bar"
                    placeholder="${t.searchPlaceholder}"
+                   aria-label="${t.searchPlaceholder}"
                    value="${state.lastSearchTerm}">
         </div>
-        <div class="surah-grid">
+        <div class="surah-grid" role="list" aria-label="${t.surahListLabel}">
             ${filterSurahs(state.lastSearchTerm).map(s => surahCardHTML(s, t)).join('')}
         </div>
     `);

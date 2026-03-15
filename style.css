@@ -851,3 +851,109 @@ main {
         font-size: 1.4rem;
     }
 }
+
+/* ── Accessibility ────────────────────────────────────────────────────────── */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+    border-radius: 4px;
+}
+
+/* Screen-reader only helper */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* ── View transition animation ────────────────────────────────────────────── */
+@keyframes viewEnter {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+#app-view > * {
+    animation: viewEnter 0.3s ease both;
+}
+
+/* Stagger surah cards */
+.surah-grid .surah-card:nth-child(1)  { animation-delay: 0.02s; }
+.surah-grid .surah-card:nth-child(2)  { animation-delay: 0.05s; }
+.surah-grid .surah-card:nth-child(3)  { animation-delay: 0.08s; }
+.surah-grid .surah-card:nth-child(4)  { animation-delay: 0.11s; }
+.surah-grid .surah-card:nth-child(5)  { animation-delay: 0.14s; }
+.surah-grid .surah-card:nth-child(6)  { animation-delay: 0.17s; }
+.surah-grid .surah-card:nth-child(7)  { animation-delay: 0.20s; }
+.surah-grid .surah-card:nth-child(8)  { animation-delay: 0.23s; }
+.surah-grid .surah-card:nth-child(9)  { animation-delay: 0.26s; }
+.surah-grid .surah-card:nth-child(10) { animation-delay: 0.29s; }
+.surah-grid .surah-card:nth-child(11) { animation-delay: 0.32s; }
+.surah-grid .surah-card:nth-child(12) { animation-delay: 0.35s; }
+
+/* Stagger ayah cards (first 8 visible) */
+.ayah-list .ayah-card { animation: viewEnter 0.35s ease both; }
+.ayah-list .ayah-card:nth-child(1) { animation-delay: 0.05s; }
+.ayah-list .ayah-card:nth-child(2) { animation-delay: 0.10s; }
+.ayah-list .ayah-card:nth-child(3) { animation-delay: 0.15s; }
+.ayah-list .ayah-card:nth-child(4) { animation-delay: 0.20s; }
+.ayah-list .ayah-card:nth-child(5) { animation-delay: 0.25s; }
+.ayah-list .ayah-card:nth-child(6) { animation-delay: 0.30s; }
+.ayah-list .ayah-card:nth-child(7) { animation-delay: 0.35s; }
+.ayah-list .ayah-card:nth-child(8) { animation-delay: 0.40s; }
+
+/* Respect prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+    #app-view > *,
+    .surah-grid .surah-card,
+    .ayah-list .ayah-card {
+        animation: none;
+    }
+}
+
+/* ── Tajweed colors ────────────────────────────────────────────────────────── */
+/* Colours follow the Tajweed Quran standard palette, adapted for dark bg */
+.ayah-text .ham_wasl    { color: #94a3b8; }   /* Hamza wasla     — grey        */
+.ayah-text .slnt        { color: #64748b; }   /* Silent letter   — dark grey   */
+.ayah-text .madda_normal     { color: #60a5fa; }   /* Madd normal     — blue        */
+.ayah-text .madda_permissible { color: #93c5fd; }  /* Madd permissible— light blue  */
+.ayah-text .madda_obligatory { color: #3b82f6; }   /* Madd obligatory — deep blue   */
+.ayah-text .madda_necessary  { color: #f87171; }   /* Madd necessary  — red         */
+.ayah-text .qlq         { color: #fb923c; }   /* Qalqala         — orange      */
+.ayah-text .ikhf        { color: #4ade80; }   /* Ikhfa           — green       */
+.ayah-text .ikhf_shfw   { color: #f9a8d4; }   /* Ikhfa shafawi   — pink        */
+.ayah-text .idghm_shfw  { color: #34d399; }   /* Idgham shafawi  — teal        */
+.ayah-text .iqlb        { color: #c084fc; }   /* Iqlab           — purple      */
+.ayah-text .idgh_ghn    { color: #86efac; }   /* Idgham w/ ghunna— light green */
+.ayah-text .idgh_w_ghn  { color: #a3e635; }   /* Idgham w/o ghunna— lime       */
+.ayah-text .idgh_mus    { color: #fbbf24; }   /* Idgham mutajanisayn — amber   */
+.ayah-text .ghn         { color: #2dd4bf; }   /* Ghunna          — cyan        */
+
+/* ── Footer ───────────────────────────────────────────────────────────────── */
+.site-footer {
+    text-align: center;
+    padding: 2rem 1rem 3rem;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--glass-border);
+    margin-top: 4rem;
+}
+
+.site-footer a {
+    color: var(--accent);
+    text-decoration: none;
+    transition: opacity 0.2s;
+}
+
+.site-footer a:hover { opacity: 0.75; }
+
+.site-footer .footer-version {
+    margin-top: 0.3rem;
+    font-size: 0.75rem;
+    opacity: 0.5;
+}

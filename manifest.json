@@ -1,0 +1,31 @@
+{
+    "name": "Al-Quran Online",
+    "short_name": "Al-Quran",
+    "description": "Lisez les 114 sourates avec traductions FR/EN et écoute audio.",
+    "start_url": "./",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "background_color": "#0f172a",
+    "theme_color": "#065f46",
+    "lang": "fr",
+    "icons": [
+        {
+            "src": "icon.svg",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "categories": ["education", "lifestyle"],
+    "screenshots": []
+}

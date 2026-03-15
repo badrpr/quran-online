@@ -30,7 +30,9 @@ export const i18n = {
         jumpLabel:         'Aller au verset',
         jumpPlaceholder:   'n°',
         jumpGo:            '→',
-        removeBookmark:    'Supprimer'
+        removeBookmark:    'Supprimer',
+        surah:             'Sourate',
+        surahListLabel:    'Liste des 114 sourates'
     },
     en: {
         heroTitle:         'The Holy Quran',
@@ -58,6 +60,8 @@ export const i18n = {
         jumpLabel:         'Go to ayah',
         jumpPlaceholder:   'no.',
         jumpGo:            '→',
-        removeBookmark:    'Remove'
+        removeBookmark:    'Remove',
+        surah:             'Surah',
+        surahListLabel:    'List of 114 surahs'
     }
 };

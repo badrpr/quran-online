@@ -15,11 +15,16 @@
     <meta name="twitter:title" content="Al-Quran Online">
     <meta name="twitter:description" content="Lisez les 114 sourates avec traductions FR/EN et écoute audio.">
     <meta name="theme-color" content="#065f46">
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23d4af37' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 19.5A2.5 2.5 0 0 1 6.5 17H20'/><path d='M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z'/></svg>">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <link rel="manifest" href="manifest.json">
+    <!-- Preconnect to API origin to reduce DNS + TLS overhead -->
+    <link rel="preconnect" href="https://api.alquran.cloud" crossorigin>
+    <link rel="dns-prefetch" href="https://cdn.islamic.network">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="glass-nav" id="main-nav">
+    <nav class="glass-nav" id="main-nav" role="navigation" aria-label="Navigation principale">
         <div class="container" style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
             <a href="#" class="logo" id="home-btn">
                 <div class="logo-icon">
@@ -54,6 +59,13 @@
             <polyline points="18 15 12 9 6 15"></polyline>
         </svg>
     </button>
+
+    <footer class="site-footer" role="contentinfo">
+        <div class="container">
+            <p>Données fournies par <a href="https://alquran.cloud" target="_blank" rel="noopener noreferrer">Al Quran Cloud API</a></p>
+            <p class="footer-version">Al-Quran Online v1.0 &mdash; open source</p>
+        </div>
+    </footer>
 
     <script type="module" src="js/main.js"></script>
 </body>

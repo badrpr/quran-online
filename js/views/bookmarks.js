@@ -35,7 +35,7 @@ export function renderBookmarks() {
     state.surahs.forEach(s => { surahMap[s.number] = s; });
 
     const content = keys.length === 0
-        ? `<p class="bookmarks-empty">${t.noBookmarks}</p>`
+        ? `<p class="bookmarks-empty" role="status">${t.noBookmarks}</p>`
         : keys.map(surahId => {
             const surah = surahMap[parseInt(surahId, 10)];
             return `
@@ -44,7 +44,7 @@ export function renderBookmarks() {
                         <div class="surah-number">${surahId}</div>
                         <div>
                             <div class="bookmark-surah-name">${surah ? surah.englishName : ''}</div>
-                            <div class="surah-name-ar" style="font-size:1.1rem;">${surah ? surah.name : ''}</div>
+                            <div class="surah-name-ar" lang="ar" style="font-size:1.1rem;">${surah ? surah.name : ''}</div>
                         </div>
                         <svg class="bookmark-group-arrow" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
                     </div>
