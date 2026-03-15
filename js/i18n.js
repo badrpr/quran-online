@@ -52,7 +52,18 @@ export const i18n = {
         statsTopSurahs:     'Sourates les plus lues',
         statsReset:         'Réinitialiser',
         statsResetConfirm:  'Réinitialiser toutes les statistiques ?',
-        statsNav:           'Stats'
+        statsNav:           'Stats',
+        translitToggle:    'Phonétique',
+        tajweedLegend:     'Légende',
+        speedLabel:        'Vitesse',
+        loopAyah:          'Répéter ce verset',
+        stopLoop:          'Arrêter la répétition',
+        tafsirToggle:      'Tafsir',
+        tafsirLoading:     'Chargement du tafsir…',
+        memMode:           'Mémorisation',
+        memReveal:         'Révéler',
+        memHideAll:        'Tout cacher',
+        memShowAll:        'Tout montrer'
     },
     en: {
         heroTitle:         'The Holy Quran',
@@ -102,6 +113,17 @@ export const i18n = {
         statsTopSurahs:     'Most-read surahs',
         statsReset:         'Reset',
         statsResetConfirm:  'Reset all statistics?',
-        statsNav:           'Stats'
+        statsNav:           'Stats',
+        translitToggle:    'Phonetics',
+        tajweedLegend:     'Legend',
+        speedLabel:        'Speed',
+        loopAyah:          'Loop this ayah',
+        stopLoop:          'Stop loop',
+        tafsirToggle:      'Tafsir',
+        tafsirLoading:     'Loading tafsir…',
+        memMode:           'Memorize',
+        memReveal:         'Reveal',
+        memHideAll:        'Hide all',
+        memShowAll:        'Show all'
     }
 };

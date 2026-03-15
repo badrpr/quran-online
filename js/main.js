@@ -24,15 +24,25 @@ window.addEventListener('hashchange', handleRoute);
 
 // ── Init ──────────────────────────────────────────────────────────────────────
 async function init() {
-    setupScrollHandler();
-    renderLangSelector();
-    initReminder();
-    showLoading();
-    [state.surahs, state.reciters] = await Promise.all([
-        fetchSurahList(),
-        fetchReciters()
-    ]);
-    await handleRoute();
+    try {
+        setupScrollHandler();
+        renderLangSelector();
+        initReminder();
+        showLoading();
+        [state.surahs, state.reciters] = await Promise.all([
+            fetchSurahList(),
+            fetchReciters()
+        ]);
+        if (state.surahs.length === 0) {
+            document.getElementById('app-view').textContent =
+                '⚠️ Impossible de contacter l\'API. Vérifiez votre connexion ou désactivez le VPN.';
+            return;
+        }
+        await handleRoute();
+    } catch (err) {
+        console.error('[init] Fatal error:', err);
+        document.getElementById('app-view').textContent = 'Erreur de chargement — voir la console (F12).';
+    }
 }
 
 // ── Scroll handler ────────────────────────────────────────────────────────────

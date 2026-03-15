@@ -37,8 +37,9 @@ export function initReminder() {
     const label  = document.getElementById('reminder-nav-label');
     if (!btn) return;
 
+    const notifSupported = 'Notification' in window;
     const saved = storage.get('reminderTime', null);
-    if (saved && Notification.permission === 'granted') {
+    if (notifSupported && saved && Notification.permission === 'granted') {
         scheduleReminder(saved);
         updateBtn(true, saved);
     } else {
@@ -59,7 +60,7 @@ export function initReminder() {
         }
 
         // Check / request permission
-        if (!('Notification' in window)) return;
+        if (!notifSupported) return;
         let perm = Notification.permission;
         if (perm === 'default') perm = await Notification.requestPermission();
         if (perm !== 'granted') { alert(tr.reminderDenied); return; }

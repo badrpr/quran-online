@@ -76,7 +76,7 @@ export function renderBookmarks() {
             <button id="back-btn-bm" class="glass" style="margin-bottom:2rem; padding:0.5rem 1rem; cursor:pointer; color:white; border-radius:8px; border:1px solid var(--glass-border);">${t.back}</button>
             ${content}
         </div>
-    `;
+    `);
 
     document.getElementById('back-btn-bm').addEventListener('click', () => {
         if (window.history.length > 1) history.back();
