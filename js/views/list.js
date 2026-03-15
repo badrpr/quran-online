@@ -21,13 +21,23 @@ function surahCardHTML(surah, t) {
     `;
 }
 
+// Strip Arabic diacritics (tashkeel) + tatweel for accent-insensitive search
+function stripDiacritics(str) {
+    return str
+        .replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06DC\u06DF-\u06E4\u06E7\u06E8\u06EA-\u06ED]/g, '')
+        .replace(/\u0640/g, ''); // tatweel
+}
+
 function filterSurahs(term) {
     if (!term) return state.surahs;
-    const lower = term.toLowerCase();
+    const lower       = term.toLowerCase();
+    const strippedTerm = stripDiacritics(term);
     return state.surahs.filter(s =>
         s.englishName.toLowerCase().includes(lower) ||
+        s.englishNameTranslation.toLowerCase().includes(lower) ||
         s.number.toString() === lower ||
-        s.name.includes(term)
+        s.name.includes(term) ||
+        stripDiacritics(s.name).includes(strippedTerm)
     );
 }
 

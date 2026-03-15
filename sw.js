@@ -19,7 +19,9 @@ const STATIC_ASSETS = [
     './js/storage.js',
     './js/views/list.js',
     './js/views/reader.js',
-    './js/views/bookmarks.js'
+    './js/views/bookmarks.js',
+    './js/reminder.js',
+    './js/views/stats.js'
 ];
 
 // API endpoints that should be long-lived (surah list + reciters)

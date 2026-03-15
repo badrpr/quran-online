@@ -1,17 +1,37 @@
 @import url('https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400;1,700&family=Inter:wght@300;400;600;700&display=swap');
 
 :root {
-    --primary: #065f46; /* Emerald 800 */
-    --primary-light: #10b981; /* Emerald 500 */
-    --accent: #d4af37; /* Gold */
-    --bg-dark: #0f172a; /* Slate 900 */
-    --card-bg: rgba(255, 255, 255, 0.05);
-    --glass-border: rgba( 255, 255, 255, 0.1 );
-    --text-main: #f8fafc;
-    --text-muted: #94a3b8;
-    --font-arabic: 'Amiri', serif;
-    --font-sans: 'Inter', sans-serif;
-    --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --primary:        #065f46;
+    --primary-light:  #10b981;
+    --accent:         #d4af37;
+    --bg-dark:        #0f172a;
+    --card-bg:        rgba(255, 255, 255, 0.05);
+    --glass-border:   rgba(255, 255, 255, 0.1);
+    --text-main:      #f8fafc;
+    --text-muted:     #94a3b8;
+    --font-arabic:    'Amiri', serif;
+    --font-sans:      'Inter', sans-serif;
+    --transition:     all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    /* theme-aware aliases (dark default) */
+    --bg:             #0f172a;
+    --nav-bg:         rgba(15, 23, 42, 0.8);
+    --nav-bg-scrolled:rgba(15, 23, 42, 0.95);
+    --hero-bg:        linear-gradient(135deg, rgba(6,95,70,0.2) 0%, rgba(15,23,42,0.5) 100%);
+    --options-bg:     #1a1a2e;
+}
+
+/* ── Light theme ─────────────────────────────────────────────────────────── */
+[data-theme="light"] {
+    --bg-dark:        #f0fdf4;
+    --bg:             #f0fdf4;
+    --card-bg:        rgba(0, 0, 0, 0.04);
+    --glass-border:   rgba(0, 0, 0, 0.1);
+    --text-main:      #0f172a;
+    --text-muted:     #475569;
+    --nav-bg:         rgba(240, 253, 244, 0.85);
+    --nav-bg-scrolled:rgba(240, 253, 244, 0.97);
+    --hero-bg:        linear-gradient(135deg, rgba(6,95,70,0.1) 0%, rgba(240,253,244,0.7) 100%);
+    --options-bg:     #ffffff;
 }
 
 * {
@@ -21,16 +41,17 @@
 }
 
 body {
-    background-color: var(--bg-dark);
+    background-color: var(--bg);
     color: var(--text-main);
     font-family: var(--font-sans);
     line-height: 1.6;
     overflow-x: hidden;
-    background-image: 
-        radial-gradient(at 0% 0%, hsla(161, 71%, 19%, 1) 0, transparent 50%), 
-        radial-gradient(at 100% 100%, hsla(217, 33%, 17%, 1) 0, transparent 50%);
+    background-image:
+        radial-gradient(at 0% 0%, hsla(161, 71%, 19%, 0.6) 0, transparent 50%),
+        radial-gradient(at 100% 100%, hsla(217, 33%, 17%, 0.6) 0, transparent 50%);
     min-height: 100vh;
     padding-bottom: 5rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 /* Glassmorphism Classes */
@@ -48,7 +69,7 @@ body {
     top: 0;
     z-index: 1000;
     height: 70px;
-    background: rgba(15, 23, 42, 0.8);
+    background: var(--nav-bg);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--glass-border);
@@ -60,7 +81,7 @@ body {
 
 .glass-nav.scrolled {
     height: 60px;
-    background: rgba(15, 23, 42, 0.95);
+    background: var(--nav-bg-scrolled);
     border-bottom: 1px solid var(--accent);
 }
 
@@ -128,7 +149,7 @@ main {
     margin-bottom: 4rem;
     padding: 4rem 2rem;
     border-radius: 24px;
-    background: linear-gradient(135deg, rgba(6, 95, 70, 0.2) 0%, rgba(15, 23, 42, 0.5) 100%);
+    background: var(--hero-bg);
 }
 
 .hero h1 {
@@ -310,7 +331,7 @@ main {
     transform: translateY(-10px);
     transition: all 0.3s ease;
     padding: 0.5rem;
-    background: #1a1a2e; /* Solid color matching theme */
+    background: var(--options-bg);
     border: 1px solid var(--accent);
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     border-radius: 12px;
@@ -501,6 +522,31 @@ main {
     align-items: center;
     justify-content: space-between;
     margin-bottom: 1rem;
+}
+
+/* ── Ayah action buttons wrapper ─────────────────────────────────────────── */
+.ayah-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+/* ── Share button ────────────────────────────────────────────────────────── */
+.share-btn {
+    background: none;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 0.3rem;
+    border-radius: 50%;
+    transition: color 0.2s, transform 0.2s;
+    display: flex;
+    align-items: center;
+}
+
+.share-btn:hover {
+    color: var(--primary-light);
+    transform: scale(1.2);
 }
 
 /* ── Bookmark button ─────────────────────────────────────────────────────── */
@@ -933,6 +979,103 @@ main {
 .ayah-text .idgh_w_ghn  { color: #a3e635; }   /* Idgham w/o ghunna— lime       */
 .ayah-text .idgh_mus    { color: #fbbf24; }   /* Idgham mutajanisayn — amber   */
 .ayah-text .ghn         { color: #2dd4bf; }   /* Ghunna          — cyan        */
+
+/* ── Stats view ───────────────────────────────────────────────────────────── */
+.stats-container {
+    max-width: 700px;
+    margin: 0 auto;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.stat-card {
+    padding: 1.25rem;
+    text-align: center;
+    border-radius: 12px;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1.1;
+}
+
+.stat-label {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin-top: 0.3rem;
+}
+
+.stat-progress-track {
+    height: 8px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.stat-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--accent));
+    border-radius: 99px;
+    transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stat-surah-row {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0;
+    border-bottom: 1px solid var(--glass-border);
+}
+
+.stat-surah-info {
+    min-width: 120px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.stat-surah-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.stat-surah-ar {
+    font-family: var(--font-arabic);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+}
+
+.stat-surah-bar-wrap {
+    flex: 1;
+    height: 6px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 99px;
+    overflow: hidden;
+}
+
+.stat-surah-bar {
+    height: 100%;
+    background: var(--primary-light);
+    border-radius: 99px;
+}
+
+.stat-surah-pct {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    min-width: 36px;
+    text-align: right;
+}
+
+@media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .stat-surah-info { min-width: 90px; }
+}
 
 /* ── Footer ───────────────────────────────────────────────────────────────── */
 .site-footer {

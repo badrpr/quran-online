@@ -7,6 +7,8 @@ import { fetchSurahList, fetchReciters } from './api.js';
 import { renderSurahList }    from './views/list.js';
 import { renderSurahReader }  from './views/reader.js';
 import { renderBookmarks }    from './views/bookmarks.js';
+import { renderStats }        from './views/stats.js';
+import { initReminder }       from './reminder.js';
 
 // ── Route handler ─────────────────────────────────────────────────────────────
 async function handleRoute() {
@@ -14,6 +16,7 @@ async function handleRoute() {
     const route = getRoute();
     if      (route.view === 'reader')    await renderSurahReader(route.id);
     else if (route.view === 'bookmarks') renderBookmarks();
+    else if (route.view === 'stats')     renderStats();
     else                                 renderSurahList();
 }
 
@@ -23,6 +26,7 @@ window.addEventListener('hashchange', handleRoute);
 async function init() {
     setupScrollHandler();
     renderLangSelector();
+    initReminder();
     showLoading();
     [state.surahs, state.reciters] = await Promise.all([
         fetchSurahList(),
@@ -99,7 +103,37 @@ document.getElementById('home-btn').addEventListener('click', e => {
     navigate('/');
 });
 
+// ── Theme toggle ───────────────────────────────────────────────────────────────
+(function setupTheme() {
+    const btn      = document.getElementById('theme-toggle-btn');
+    const iconEl   = document.getElementById('theme-icon');
+    const MOON_SVG = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>`;
+    const SUN_SVG  = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>`;
+
+    function applyTheme(theme) {
+        if (theme === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+            render(btn, MOON_SVG);
+            btn.setAttribute('aria-label', 'Passer en mode sombre');
+        } else {
+            document.documentElement.removeAttribute('data-theme');
+            render(btn, SUN_SVG);
+            btn.setAttribute('aria-label', 'Passer en mode clair');
+        }
+    }
+
+    const saved = storage.get('theme', 'dark');
+    applyTheme(saved);
+
+    btn.addEventListener('click', () => {
+        const next = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+        storage.set('theme', next);
+        applyTheme(next);
+    });
+})();
+
 document.getElementById('bookmarks-nav-btn').addEventListener('click', () => navigate('/bookmarks'));
+document.getElementById('stats-nav-btn').addEventListener('click', () => navigate('/stats'));
 
 init();
 
