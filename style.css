@@ -627,8 +627,9 @@ main {
 }
 
 .legend-dot {
-    font-size: 1rem;
+    font-size: 1.1rem;
     flex-shrink: 0;
+    font-family: var(--font-arabic);
 }
 
 .legend-name {
@@ -1142,23 +1143,27 @@ main {
     }
 }
 
-/* ── Tajweed colors ────────────────────────────────────────────────────────── */
-/* Colours follow the Tajweed Quran standard palette, adapted for dark bg */
-.ayah-text .ham_wasl    { color: #94a3b8; }   /* Hamza wasla     — grey        */
-.ayah-text .slnt        { color: #64748b; }   /* Silent letter   — dark grey   */
-.ayah-text .madda_normal     { color: #60a5fa; }   /* Madd normal     — blue        */
-.ayah-text .madda_permissible { color: #93c5fd; }  /* Madd permissible— light blue  */
-.ayah-text .madda_obligatory { color: #3b82f6; }   /* Madd obligatory — deep blue   */
-.ayah-text .madda_necessary  { color: #f87171; }   /* Madd necessary  — red         */
-.ayah-text .qlq         { color: #fb923c; }   /* Qalqala         — orange      */
-.ayah-text .ikhf        { color: #4ade80; }   /* Ikhfa           — green       */
-.ayah-text .ikhf_shfw   { color: #f9a8d4; }   /* Ikhfa shafawi   — pink        */
-.ayah-text .idghm_shfw  { color: #34d399; }   /* Idgham shafawi  — teal        */
-.ayah-text .iqlb        { color: #c084fc; }   /* Iqlab           — purple      */
-.ayah-text .idgh_ghn    { color: #86efac; }   /* Idgham w/ ghunna— light green */
-.ayah-text .idgh_w_ghn  { color: #a3e635; }   /* Idgham w/o ghunna— lime       */
-.ayah-text .idgh_mus    { color: #fbbf24; }   /* Idgham mutajanisayn — amber   */
-.ayah-text .ghn         { color: #2dd4bf; }   /* Ghunna          — cyan        */
+/* ── Tajweed colors — palette standard Coran Tajweed imprimé ──────────────── */
+.ayah-text .ham_wasl         { color: #AAAAAA; }   /* Hamza Wasl          — gris         */
+.ayah-text .slnt             { color: #AAAAAA; }   /* Lettre silencieuse  — gris         */
+.ayah-text .qlq              { color: #DD0008; }   /* Qalqala             — rouge        */
+.ayah-text .ghn              { color: #FF7E1E; }   /* Ghunna              — orange       */
+.ayah-text .ikhf             { color: #9400A8; }   /* Ikhfa               — violet       */
+.ayah-text .ikhf_shfw        { color: #D500B7; }   /* Ikhfa Shafawi       — rose-violet  */
+.ayah-text .iqlb             { color: #26BFFD; }   /* Iqlab               — cyan         */
+.ayah-text .idgh_ghn         { color: #169200; }   /* Idgham avec Ghunna  — vert         */
+.ayah-text .idgh_w_ghn       { color: #169200; }   /* Idgham sans Ghunna  — vert         */
+.ayah-text .idghm_shfw       { color: #A1A1A1; }   /* Idgham Shafawi      — gris clair   */
+.ayah-text .idgh_mus         { color: #169200; }   /* Idgham Mutajanisayn — vert         */
+.ayah-text .madda_normal     { color: #537FFF; }   /* Madd normal         — bleu         */
+.ayah-text .madda_permissible{ color: #4050FF; }   /* Madd permissible    — bleu moyen   */
+.ayah-text .madda_obligatory { color: #000EBC; }   /* Madd obligatoire    — bleu foncé   */
+.ayah-text .madda_necessary  { color: #000EBC; }   /* Madd nécessaire     — bleu foncé   */
+
+/* Désactivé : hériter couleur parent + pas de tooltip */
+.ayah-text.no-tajweed span[class]        { color: inherit !important; }
+.ayah-text.no-tajweed span[data-rule]    { cursor: text; }
+.ayah-text.no-tajweed span[data-rule]:hover::after { display: none; }
 
 /* ── Stats view ───────────────────────────────────────────────────────────── */
 .stats-container {

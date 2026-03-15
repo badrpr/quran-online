@@ -28,12 +28,17 @@ const TAJWEED_RULES = {
     g: { cls: 'ghn',                fr: ['Ghunna',               'Nasalisation 2 temps'],          en: ['Ghunna',               '2-beat nasalization']            }
 };
 
-function parseTajweed(text) {
-    return text.replace(/\[([a-z])[^\[]*\[([^\]]+)\]/g, (_, ruleId, content) => {
-        const rule = TAJWEED_RULES[ruleId];
-        const label = rule ? rule.fr[0] : '';
-        return `<span class="${rule?.cls || ''}" data-rule="${label}">${content}</span>`;
+function parseTajweed(text, lang = 'fr') {
+    // Format from quran-tajweed edition: [ruleId:x:y[text]
+    // Step 1 — replace opening markers with <span>
+    let result = text.replace(/\[([a-z]+):[^[]+\[/g, (_, ruleId) => {
+        const rule  = TAJWEED_RULES[ruleId];
+        const label = rule ? rule[lang][0] : '';
+        return `<span class="${rule?.cls || ''}" data-rule="${label}">`;
     });
+    // Step 2 — replace closing ] with </span>
+    result = result.replace(/\]/g, '</span>');
+    return result;
 }
 
 // ── SVG icons ──────────────────────────────────────────────────────────────────
@@ -51,7 +56,7 @@ export async function renderSurahReader(id) {
     showLoading();
 
     const [arabicData, translationData, translitData] = await Promise.all([
-        fetchSurahDetail(id, 'quran-uthmani'),
+        fetchSurahDetail(id, 'quran-tajweed'),
         fetchTranslation(id, state.selectedTranslationId),
         fetchTransliteration(id)
     ]);
@@ -112,7 +117,7 @@ export async function renderSurahReader(id) {
                             </button>
                         </div>
                     </div>
-                    <div class="ayah-text${tajweedOn ? '' : ' no-tajweed'}${memClass}" lang="ar">${parseTajweed(ayah.text)}</div>
+                    <div class="ayah-text${tajweedOn ? '' : ' no-tajweed'}${memClass}" lang="ar">${parseTajweed(ayah.text, state.currentLang)}</div>
                     ${translitText ? `<div class="ayah-translit${translitOn ? '' : ' hidden'}">${translitText}</div>` : ''}
                     <div class="ayah-translation">${translationData.ayahs[index].text}</div>
                     <div class="tafsir-body hidden" data-index="${index}"></div>
