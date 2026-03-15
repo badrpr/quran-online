@@ -1,0 +1,63 @@
+export const langConfig = {
+    fr: { id: 'fr.hamidullah', name: 'Français' },
+    en: { id: 'en.sahih',     name: 'English'   }
+};
+
+export const i18n = {
+    fr: {
+        heroTitle:         'Le Saint Coran',
+        heroDesc:          'Explorez les 114 sourates avec une interface moderne et élégante.',
+        searchPlaceholder: 'Rechercher une sourate (nom ou numéro)...',
+        versets:           'Versets',
+        back:              '← Retour',
+        listen:            'Écouter la Sourate',
+        pause:             'Pause',
+        resume:            'Reprendre',
+        ready:             'Prêt à écouter',
+        loading:           "Chargement de l'audio...",
+        notAvailable:      'Audio non disponible pour ce récitant',
+        error:             'Erreur lors du chargement de la sourate.',
+        reciterLabel:      'Choisir un Récitant',
+        ayah:              'Verset',
+        fin:               'Fin de la sourate',
+        reListen:          'Écouter à nouveau',
+        meccan:            'Mecquoise',
+        medinan:           'Médinoise',
+        bookmarks:         'Favoris',
+        bookmarksTitle:    'Mes Ayahs Favoris',
+        noBookmarks:       "Aucun favori pour l'instant. Appuyez sur ♥ pour en ajouter.",
+        resumeAt:          'Reprendre la lecture',
+        jumpLabel:         'Aller au verset',
+        jumpPlaceholder:   'n°',
+        jumpGo:            '→',
+        removeBookmark:    'Supprimer'
+    },
+    en: {
+        heroTitle:         'The Holy Quran',
+        heroDesc:          'Explore the 114 Surahs with a modern and elegant interface.',
+        searchPlaceholder: 'Search for a surah (name or number)...',
+        versets:           'Ayahs',
+        back:              '← Back',
+        listen:            'Listen to Surah',
+        pause:             'Pause',
+        resume:            'Resume',
+        ready:             'Ready to listen',
+        loading:           'Loading audio...',
+        notAvailable:      'Audio not available for this reciter',
+        error:             'Error loading the surah.',
+        reciterLabel:      'Choose a Reciter',
+        ayah:              'Ayah',
+        fin:               'End of Surah',
+        reListen:          'Listen again',
+        meccan:            'Meccan',
+        medinan:           'Medinan',
+        bookmarks:         'Bookmarks',
+        bookmarksTitle:    'My Bookmarked Ayahs',
+        noBookmarks:       'No bookmarks yet. Tap ♥ on any ayah to add one.',
+        resumeAt:          'Resume reading',
+        jumpLabel:         'Go to ayah',
+        jumpPlaceholder:   'no.',
+        jumpGo:            '→',
+        removeBookmark:    'Remove'
+    }
+};
