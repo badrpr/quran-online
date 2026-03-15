@@ -70,9 +70,10 @@ export async function renderSurahReader(id) {
     const memMode          = storage.get('memMode', false);
 
     const reciterOptions = state.reciters.map(r => {
-        const sel = r.identifier === savedReciter ? 'data-selected="true"' : '';
-        return `<div class="custom-option" data-value="${r.identifier}" ${sel}>
-                    <span class="option-name">${r.name}</span>
+        const sel      = r.identifier === savedReciter ? 'data-selected="true"' : '';
+        const typeTag  = r.type === 'versebyverse' ? '' : ' <span class="reciter-type-tag">sourate</span>';
+        return `<div class="custom-option" data-value="${r.identifier}" data-type="${r.type}" ${sel}>
+                    <span class="option-name">${r.name}${typeTag}</span>
                     <span class="option-sub">${r.englishName}</span>
                 </div>`;
     }).join('');
@@ -454,37 +455,67 @@ export async function renderSurahReader(id) {
         status.innerText      = tr.loading;
         playBtn.disabled      = true;
         playBtn.style.opacity = '0.5';
-        currentAudioData      = await fetchAudio(id, selectedReciterId);
 
-        if (currentAudioData?.ayahs?.length > 0) {
-            currentAyahIndex = 0;
-            playAyah(currentAyahIndex);
+        const reciterInfo = state.reciters.find(r => r.identifier === selectedReciterId);
+        const isVBV       = reciterInfo?.type === 'versebyverse';
+
+        if (isVBV) {
+            // ── Verse-by-verse: play ayah by ayah ────────────────────────────
+            currentAudioData = await fetchAudio(id, selectedReciterId);
+
+            if (currentAudioData?.ayahs?.length > 0) {
+                currentAyahIndex = 0;
+                playAyah(currentAyahIndex);
+                playBtn.disabled      = false;
+                playBtn.style.opacity = '1';
+                setPlayBtn(ICON_PAUSE, tr.pause);
+
+                audioPlayer.onended = () => {
+                    if (loopAyahIndex >= 0) {
+                        playAyah(loopAyahIndex);
+                    } else {
+                        currentAyahIndex++;
+                        if (currentAyahIndex < currentAudioData.ayahs.length) {
+                            playAyah(currentAyahIndex);
+                        } else {
+                            const trEnd = i18n[state.currentLang];
+                            status.innerText = trEnd.fin;
+                            setPlayBtn(ICON_PLAY, trEnd.reListen);
+                            document.querySelectorAll('.ayah-card').forEach(c => c.style.borderColor = 'var(--glass-border)');
+                            document.querySelectorAll('.loop-btn').forEach(b => b.classList.remove('active'));
+                            currentAudioData = null;
+                            loopAyahIndex    = -1;
+                        }
+                    }
+                };
+            } else {
+                status.innerText      = tr.notAvailable;
+                playBtn.disabled      = false;
+                playBtn.style.opacity = '1';
+            }
+        } else {
+            // ── Complete surah: single MP3 ────────────────────────────────────
+            const audioUrl = `https://cdn.islamic.network/quran/audio-surah/128/${selectedReciterId}/${id}.mp3`;
+            currentAudioData = { complete: true };
+            audioPlayer.src          = audioUrl;
+            audioPlayer.playbackRate = storage.get('audioSpeed', 1);
+            audioPlayer.play();
             playBtn.disabled      = false;
             playBtn.style.opacity = '1';
             setPlayBtn(ICON_PAUSE, tr.pause);
+            status.innerText = arabicData.englishName;
 
-            audioPlayer.onended = () => {
-                if (loopAyahIndex >= 0) {
-                    playAyah(loopAyahIndex);
-                } else {
-                    currentAyahIndex++;
-                    if (currentAyahIndex < currentAudioData.ayahs.length) {
-                        playAyah(currentAyahIndex);
-                    } else {
-                        const trEnd = i18n[state.currentLang];
-                        status.innerText = trEnd.fin;
-                        setPlayBtn(ICON_PLAY, trEnd.reListen);
-                        document.querySelectorAll('.ayah-card').forEach(c => c.style.borderColor = 'var(--glass-border)');
-                        document.querySelectorAll('.loop-btn').forEach(b => b.classList.remove('active'));
-                        currentAudioData = null;
-                        loopAyahIndex    = -1;
-                    }
-                }
+            audioPlayer.onerror = () => {
+                status.innerText = tr.notAvailable;
+                setPlayBtn(ICON_PLAY, tr.listen);
+                currentAudioData = null;
             };
-        } else {
-            status.innerText      = tr.notAvailable;
-            playBtn.disabled      = false;
-            playBtn.style.opacity = '1';
+            audioPlayer.onended = () => {
+                const trEnd = i18n[state.currentLang];
+                status.innerText = trEnd.fin;
+                setPlayBtn(ICON_PLAY, trEnd.reListen);
+                currentAudioData = null;
+            };
         }
     });
 

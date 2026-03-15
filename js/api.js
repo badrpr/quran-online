@@ -76,9 +76,13 @@ export async function fetchTafsir(id, edition = 'en.maarifulquran') {
 
 export async function fetchReciters() {
     try {
-        const res  = await fetchWithTimeout(`${BASE_URL}/edition?format=audio&type=versebyverse`);
+        const res  = await fetchWithTimeout(`${BASE_URL}/edition?format=audio&language=ar`);
         const data = await res.json();
-        return data.data;
+        // Sort: versebyverse first, then complete, alphabetically within each group
+        return (data.data || []).sort((a, b) => {
+            if (a.type === b.type) return a.englishName.localeCompare(b.englishName);
+            return a.type === 'versebyverse' ? -1 : 1;
+        });
     } catch (e) {
         console.error('fetchReciters:', e);
         return [];

@@ -386,6 +386,20 @@ main {
     color: var(--text-muted);
 }
 
+.reciter-type-tag {
+    display: inline-block;
+    font-size: 0.65rem;
+    font-weight: 700;
+    background: rgba(212,175,55,0.18);
+    color: var(--accent);
+    border-radius: 4px;
+    padding: 0.05rem 0.35rem;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+
 .custom-option[data-selected="true"] .option-sub {
     color: rgba(255, 255, 255, 0.8);
 }
