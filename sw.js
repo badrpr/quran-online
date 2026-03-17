@@ -1,5 +1,5 @@
 // ── Service Worker — Al-Quran Online ──────────────────────────────────────────
-const CACHE_VERSION  = 'v2';
+const CACHE_VERSION  = 'v3';
 const STATIC_CACHE   = `quran-static-${CACHE_VERSION}`;
 const API_CACHE      = `quran-api-${CACHE_VERSION}`;
 
@@ -18,6 +18,7 @@ const STATIC_ASSETS = [
     './js/i18n.js',
     './js/storage.js',
     './js/views/list.js',
+    './js/tajweed.js',
     './js/views/reader.js',
     './js/views/bookmarks.js',
     './js/reminder.js',
@@ -74,6 +75,12 @@ self.addEventListener('fetch', event => {
             // Surah content + audio: Network-First (fresh data preferred, cache as fallback)
             event.respondWith(networkFirst(request, API_CACHE));
         }
+        return;
+    }
+
+    // AlQuran Cloud CDN (fonts, CSS) → Cache-First
+    if (url.hostname === 'cdn.alquran.cloud' || url.hostname === 'alquran.cloud') {
+        event.respondWith(cacheFirst(request, STATIC_CACHE));
         return;
     }
 

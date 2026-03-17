@@ -6,40 +6,29 @@ import { app, render, showLoading }     from '../dom.js';
 import { fetchSurahDetail, fetchTranslation, fetchAudio, fetchTransliteration, fetchTafsir } from '../api.js';
 import { isBookmarked, toggleBookmark } from './bookmarks.js';
 import { recordAyahRead }               from './stats.js';
+import { Tajweed }                      from '../tajweed.js';
 
-// ── Tajweed rules ──────────────────────────────────────────────────────────────
-const TAJWEED_RULES = {
-    h: { cls: 'ham_wasl',           fr: ['Hamza Wasl',           'Liaison silencieuse'],           en: ['Hamza Wasl',           'Silent connection']              },
-    s: { cls: 'slnt',               fr: ['Lettre silencieuse',   'Ne se prononce pas'],            en: ['Silent letter',        'Not pronounced']                 },
-    l: { cls: 'slnt',               fr: ['Lettre silencieuse',   'Ne se prononce pas'],            en: ['Silent letter',        'Not pronounced']                 },
-    n: { cls: 'madda_normal',       fr: ['Madd normal',          'Allongement 2 temps'],           en: ['Normal Madd',          '2 beats elongation']             },
-    p: { cls: 'madda_permissible',  fr: ['Madd permissible',     'Allongement 2 ou 4 temps'],      en: ['Permissible Madd',     '2 or 4 beats elongation']        },
-    m: { cls: 'madda_necessary',    fr: ['Madd nécessaire',      'Allongement 6 temps'],           en: ['Necessary Madd',       '6 beats elongation']             },
-    q: { cls: 'qlq',                fr: ['Qalqala',              'Vibration légère à l\'arrêt'],   en: ['Qalqala',              'Slight echo at stop']            },
-    o: { cls: 'madda_obligatory',   fr: ['Madd obligatoire',     'Allongement 4 ou 5 temps'],      en: ['Obligatory Madd',      '4 or 5 beats elongation']        },
-    c: { cls: 'ikhf_shfw',          fr: ['Ikhfa Shafawi',        'Nasalisation labiale cachée'],   en: ['Ikhfa Shafawi',        'Hidden labial nasalization']     },
-    f: { cls: 'ikhf',               fr: ['Ikhfa',                'Prononciation cachée nasale'],   en: ['Ikhfa',                'Hidden nasal pronunciation']     },
-    w: { cls: 'idghm_shfw',         fr: ['Idgham Shafawi',       'Fusion labiale avec nasalisation'], en: ['Idgham Shafawi',    'Labial merger with nasalization']},
-    i: { cls: 'iqlb',               fr: ['Iqlab',                'Noun → Mim avec ghunna'],        en: ['Iqlab',                'Noon → Meem with ghunna']        },
-    a: { cls: 'idgh_ghn',           fr: ['Idgham avec Ghunna',   'Fusion avec nasalisation 2t'],   en: ['Idgham with Ghunna',   'Merger with 2-beat nasalization']},
-    u: { cls: 'idgh_w_ghn',         fr: ['Idgham sans Ghunna',   'Fusion sans nasalisation'],      en: ['Idgham w/o Ghunna',    'Merger without nasalization']    },
-    d: { cls: 'idgh_mus',           fr: ['Idgham Mutajanisayn',  'Fusion de lettres similaires'],  en: ['Idgham Mutajanisayn',  'Merger of similar letters']      },
-    b: { cls: 'idgh_mus',           fr: ['Idgham Mutajanisayn',  'Fusion de lettres similaires'],  en: ['Idgham Mutajanisayn',  'Merger of similar letters']      },
-    g: { cls: 'ghn',                fr: ['Ghunna',               'Nasalisation 2 temps'],          en: ['Ghunna',               '2-beat nasalization']            }
+// ── Tajweed parser instance ────────────────────────────────────────────────────
+const tajweedParser = new Tajweed();
+
+// ── Tajweed legend (localized FR/EN) ───────────────────────────────────────────
+const TAJWEED_LEGEND = {
+    ham_wasl:          { fr: ['Hamza Wasl',           'Liaison silencieuse'],           en: ['Hamza Wasl',           'Silent connection']              },
+    slnt:              { fr: ['Lettre silencieuse',   'Ne se prononce pas'],            en: ['Silent letter',        'Not pronounced']                 },
+    madda_normal:      { fr: ['Madd normal',          'Allongement 2 temps'],           en: ['Normal Madd',          '2 beats elongation']             },
+    madda_permissible: { fr: ['Madd permissible',     'Allongement 2 ou 4 temps'],      en: ['Permissible Madd',     '2 or 4 beats elongation']        },
+    madda_necessary:   { fr: ['Madd nécessaire',      'Allongement 6 temps'],           en: ['Necessary Madd',       '6 beats elongation']             },
+    qlq:               { fr: ['Qalqala',              'Vibration légère à l\'arrêt'],   en: ['Qalqala',              'Slight echo at stop']            },
+    madda_obligatory:  { fr: ['Madd obligatoire',     'Allongement 4 ou 5 temps'],      en: ['Obligatory Madd',      '4 or 5 beats elongation']        },
+    ikhf_shfw:         { fr: ['Ikhfa Shafawi',        'Nasalisation labiale cachée'],   en: ['Ikhfa Shafawi',        'Hidden labial nasalization']      },
+    ikhf:              { fr: ['Ikhfa',                'Prononciation cachée nasale'],   en: ['Ikhfa',                'Hidden nasal pronunciation']     },
+    idghm_shfw:        { fr: ['Idgham Shafawi',       'Fusion labiale avec nasalisation'], en: ['Idgham Shafawi',    'Labial merger with nasalization'] },
+    iqlb:              { fr: ['Iqlab',                'Noun → Mim avec ghunna'],        en: ['Iqlab',                'Noon → Meem with ghunna']        },
+    idgh_ghn:          { fr: ['Idgham avec Ghunna',   'Fusion avec nasalisation 2t'],   en: ['Idgham with Ghunna',   'Merger with 2-beat nasalization'] },
+    idgh_w_ghn:        { fr: ['Idgham sans Ghunna',   'Fusion sans nasalisation'],      en: ['Idgham w/o Ghunna',    'Merger without nasalization']     },
+    idgh_mus:          { fr: ['Idgham Mutajanisayn',  'Fusion de lettres similaires'],  en: ['Idgham Mutajanisayn',  'Merger of similar letters']      },
+    ghn:               { fr: ['Ghunna',               'Nasalisation 2 temps'],          en: ['Ghunna',               '2-beat nasalization']            }
 };
-
-function parseTajweed(text, lang = 'fr') {
-    // Format from quran-tajweed edition: [ruleId:x:y[text]
-    // Step 1 — replace opening markers with <span>
-    let result = text.replace(/\[([a-z]+):[^[]+\[/g, (_, ruleId) => {
-        const rule  = TAJWEED_RULES[ruleId];
-        const label = rule ? rule[lang][0] : '';
-        return `<span class="${rule?.cls || ''}" data-rule="${label}">`;
-    });
-    // Step 2 — replace closing ] with </span>
-    result = result.replace(/\]/g, '</span>');
-    return result;
-}
 
 // ── SVG icons ──────────────────────────────────────────────────────────────────
 const ICON_PLAY  = '<svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
@@ -84,12 +73,11 @@ export async function renderSurahReader(id) {
     }).join('');
 
     // ── Tajweed legend items ──────────────────────────────────────────────────
-    const legendItems = Object.values(TAJWEED_RULES)
-        .filter((v, i, a) => a.findIndex(x => x.cls === v.cls) === i) // deduplicate
-        .map(rule => {
+    const legendItems = Object.entries(TAJWEED_LEGEND)
+        .map(([cls, rule]) => {
             const [name, desc] = state.currentLang === 'fr' ? rule.fr : rule.en;
             return `<div class="legend-item">
-                <span class="legend-dot ${rule.cls}">&#x25CF;</span>
+                <span class="legend-dot ${cls}">&#x25CF;</span>
                 <span class="legend-name">${name}</span>
                 <span class="legend-desc">${desc}</span>
             </div>`;
@@ -117,7 +105,7 @@ export async function renderSurahReader(id) {
                             </button>
                         </div>
                     </div>
-                    <div class="ayah-text${tajweedOn ? '' : ' no-tajweed'}${memClass}" lang="ar">${parseTajweed(ayah.text, state.currentLang)}</div>
+                    <div class="ayah-text${tajweedOn ? '' : ' no-tajweed'}${memClass}" lang="ar">${tajweedParser.parse(ayah.text)}</div>
                     ${translitText ? `<div class="ayah-translit${translitOn ? '' : ' hidden'}">${translitText}</div>` : ''}
                     <div class="ayah-translation">${translationData.ayahs[index].text}</div>
                     <div class="tafsir-body hidden" data-index="${index}"></div>

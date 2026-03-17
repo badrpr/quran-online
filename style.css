@@ -9,7 +9,7 @@
     --glass-border:   rgba(255, 255, 255, 0.1);
     --text-main:      #f8fafc;
     --text-muted:     #94a3b8;
-    --font-arabic:    'Amiri', serif;
+    --font-arabic:    'MeQuran', 'Amiri', serif;
     --font-sans:      'Inter', sans-serif;
     --transition:     all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     /* theme-aware aliases (dark default) */
@@ -643,15 +643,25 @@ main {
     font-size: 0.78rem;
 }
 
+/* ── MeQuran font class ──────────────────────────────────────────────────── */
+.font-mequran {
+    font-family: 'MeQuran', 'Amiri', serif;
+}
+
 /* ── Tajweed tooltip on hover ─────────────────────────────────────────────── */
-.ayah-text span[data-rule] {
+.ayah-text tajweed {
     position: relative;
     cursor: help;
     border-radius: 2px;
+    transition: filter 0.2s ease;
 }
 
-.ayah-text span[data-rule]:hover::after {
-    content: attr(data-rule);
+.ayah-text tajweed:hover {
+    filter: brightness(1.3);
+}
+
+.ayah-text tajweed:hover::after {
+    content: attr(data-description);
     position: absolute;
     bottom: calc(100% + 4px);
     left: 50%;
@@ -671,7 +681,7 @@ main {
 }
 
 /* ── No-tajweed mode ──────────────────────────────────────────────────────── */
-.ayah-text.no-tajweed span { color: inherit !important; }
+.ayah-text.no-tajweed tajweed { color: inherit !important; }
 
 /* ── Transliteration ──────────────────────────────────────────────────────── */
 .ayah-translit {
@@ -1144,26 +1154,26 @@ main {
 }
 
 /* ── Tajweed colors — palette standard Coran Tajweed imprimé ──────────────── */
-.ayah-text .ham_wasl         { color: #AAAAAA; }   /* Hamza Wasl          — gris         */
-.ayah-text .slnt             { color: #AAAAAA; }   /* Lettre silencieuse  — gris         */
-.ayah-text .qlq              { color: #DD0008; }   /* Qalqala             — rouge        */
-.ayah-text .ghn              { color: #FF7E1E; }   /* Ghunna              — orange       */
-.ayah-text .ikhf             { color: #9400A8; }   /* Ikhfa               — violet       */
-.ayah-text .ikhf_shfw        { color: #D500B7; }   /* Ikhfa Shafawi       — rose-violet  */
-.ayah-text .iqlb             { color: #26BFFD; }   /* Iqlab               — cyan         */
-.ayah-text .idgh_ghn         { color: #169200; }   /* Idgham avec Ghunna  — vert         */
-.ayah-text .idgh_w_ghn       { color: #169200; }   /* Idgham sans Ghunna  — vert         */
-.ayah-text .idghm_shfw       { color: #A1A1A1; }   /* Idgham Shafawi      — gris clair   */
-.ayah-text .idgh_mus         { color: #169200; }   /* Idgham Mutajanisayn — vert         */
-.ayah-text .madda_normal     { color: #537FFF; }   /* Madd normal         — bleu         */
-.ayah-text .madda_permissible{ color: #4050FF; }   /* Madd permissible    — bleu moyen   */
-.ayah-text .madda_obligatory { color: #000EBC; }   /* Madd obligatoire    — bleu foncé   */
-.ayah-text .madda_necessary  { color: #000EBC; }   /* Madd nécessaire     — bleu foncé   */
+tajweed.ham_wasl          { color: #AAAAAA; }   /* Hamza Wasl          — gris         */
+tajweed.slnt              { color: #AAAAAA; }   /* Lettre silencieuse  — gris         */
+tajweed.qlq               { color: #DD0008; }   /* Qalqala             — rouge        */
+tajweed.ghn               { color: #FF7E1E; }   /* Ghunna              — orange       */
+tajweed.ikhf              { color: #9400A8; }   /* Ikhfa               — violet       */
+tajweed.ikhf_shfw         { color: #D500B7; }   /* Ikhfa Shafawi       — rose-violet  */
+tajweed.iqlb              { color: #26BFFD; }   /* Iqlab               — cyan         */
+tajweed.idgh_ghn          { color: #169200; }   /* Idgham avec Ghunna  — vert         */
+tajweed.idgh_w_ghn        { color: #169200; }   /* Idgham sans Ghunna  — vert         */
+tajweed.idghm_shfw        { color: #A1A1A1; }   /* Idgham Shafawi      — gris clair   */
+tajweed.idgh_mus          { color: #169200; }   /* Idgham Mutajanisayn — vert         */
+tajweed.madda_normal      { color: #537FFF; }   /* Madd normal         — bleu         */
+tajweed.madda_permissible { color: #4050FF; }   /* Madd permissible    — bleu moyen   */
+tajweed.madda_obligatory  { color: #000EBC; }   /* Madd obligatoire    — bleu foncé   */
+tajweed.madda_necessary   { color: #000EBC; }   /* Madd nécessaire     — bleu foncé   */
 
 /* Désactivé : hériter couleur parent + pas de tooltip */
-.ayah-text.no-tajweed span[class]        { color: inherit !important; }
-.ayah-text.no-tajweed span[data-rule]    { cursor: text; }
-.ayah-text.no-tajweed span[data-rule]:hover::after { display: none; }
+.ayah-text.no-tajweed tajweed             { color: inherit !important; }
+.ayah-text.no-tajweed tajweed             { cursor: text; }
+.ayah-text.no-tajweed tajweed:hover::after { display: none; }
 
 /* ── Stats view ───────────────────────────────────────────────────────────── */
 .stats-container {
